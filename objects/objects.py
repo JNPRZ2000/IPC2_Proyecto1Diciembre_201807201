@@ -75,6 +75,8 @@ class Album:
         self.nombre = nombre
         self.imagen = imagen
         self.listaCanciones = ListaDoble()
+    def getCanciones(self):
+        return self.listaCanciones
     def __str__(self):
         string = "\n\t\t\tAlbum: {} - Canciones:\n".format(self.nombre)
         for i in range(self.listaCanciones.lenght):
@@ -84,6 +86,13 @@ class Artista:
     def __init__(self, nombre):
         self.nombre = nombre
         self.listaAlbumes = ListaDoble()
+    def getAlbumes(self):
+        lista = []
+        for i in range(self.listaAlbumes.lenght):
+            album = self.listaAlbumes.getById(i)
+            lista.append(album.nombre)
+        return lista
+
     def __str__(self):
         string = "\n\t\tArtista: {} - Albumes:".format(self.nombre)
         for i in range(self.listaAlbumes.lenght):
@@ -129,6 +138,13 @@ class Library:
                     cancion = album.listaCanciones.getById(k)
                     lista.append(cancion)
         return lista
+    def getArtistas(self):
+        lista = []
+        for i in range(self.listaArtistas.lenght):
+            artista = self.listaArtistas.getById(i)
+            lista.append(artista.nombre)
+        return lista
+        
     def __str__(self):
         string = "Biblioteca\n\tArtistas:\n"
         for i in range(self.listaArtistas.lenght):
@@ -176,6 +192,15 @@ class ListaCircular:
             self.head.anterior = self.cola
             self.cola.siguiente = self.head
         self.length += 1
+    def getById(self, id):
+        if id < 0 or id >= self.length or self.head == None:
+            return None
+        else:
+            actual = self.head
+            while True:
+                if actual.id == id:
+                    break
+            return actual
     def contains(self, object):
         if self.head == None:
             return None
