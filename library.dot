@@ -1,0 +1,70 @@
+digraph G {
+layout = dot;
+labelloc = "t";
+edge [weigth = 1000];
+rankdir = LR;
+subgraph artistas {
+rankdir = LR;
+"Radio Head"[fillcolor = beige style = "filled"];
+subgraph "albumRadio Head"{
+rankdir = LR;
+"Radio Head"->"Ok Computer"
+"Ok Computer"[fillcolor = aquamarine style = "filled"];subgraph "albumOk Computer"{
+rankdir = LR;
+"Ok Computer"->"Airbag"
+"Airbag"[fillcolor = deepskyblue style = "filled"];
+}
+}
+"PearlJam "[fillcolor = beige style = "filled"];
+subgraph "albumPearlJam "{
+rankdir = LR;
+"PearlJam "->"Disc1 1998-2003"
+"Disc1 1998-2003"[fillcolor = aquamarine style = "filled"];subgraph "albumDisc1 1998-2003"{
+rankdir = LR;
+"Disc1 1998-2003"->"Last Kiss"
+"Last Kiss"[fillcolor = deepskyblue style = "filled"];
+}
+}
+"Guns N' Roses"[fillcolor = beige style = "filled"];
+subgraph "albumGuns N' Roses"{
+rankdir = LR;
+"Guns N' Roses"->"Appetite for Destruction"
+"Appetite for Destruction"[fillcolor = aquamarine style = "filled"];subgraph "albumAppetite for Destruction"{
+rankdir = LR;
+"Appetite for Destruction"->"Paradise City"
+"Paradise City"[fillcolor = deepskyblue style = "filled"];
+"Sweet Child O' Mine"[fillcolor = deepskyblue style = "filled"];
+}
+"Use Your Illusion II"[fillcolor = aquamarine style = "filled"];subgraph "albumUse Your Illusion II"{
+rankdir = LR;
+"Use Your Illusion II"->"Knocking On Heavens Door"
+"Knocking On Heavens Door"[fillcolor = deepskyblue style = "filled"];
+}
+}
+}
+"Radio Head"->"PearlJam "
+"Ok Computer"->"NoneR00"[style = dashed]
+"Airbag"->"NoneR000"[style = dashed]
+"PearlJam "->"Guns N' Roses"
+"Disc1 1998-2003"->"NoneR10"[style = dashed]
+"Last Kiss"->"NoneR100"[style = dashed]
+"Guns N' Roses"->"NoneR3"[style = dashed]
+"Appetite for Destruction"->"Use Your Illusion II"
+"Paradise City"->"Sweet Child O' Mine"
+"Sweet Child O' Mine"->"NoneR201"[style = dashed]
+"Use Your Illusion II"->"NoneR21"[style = dashed]
+"Knocking On Heavens Door"->"NoneR210"[style = dashed]
+"Guns N' Roses"->"PearlJam "
+"Use Your Illusion II"->"Appetite for Destruction"
+"Knocking On Heavens Door"->"NoneL012"[style = dashed]
+"Appetite for Destruction"->"NoneL02"[style = dashed]
+"Sweet Child O' Mine"->"Paradise City"
+"Paradise City"->"NoneL002"[style = dashed]
+"PearlJam "->"Radio Head"
+"Disc1 1998-2003"->"NoneL01"[style = dashed]
+"Last Kiss"->"NoneL001"[style = dashed]
+"Radio Head"->"NoneL0"[style = dashed]
+"Ok Computer"->"NoneL00"[style = dashed]
+"Airbag"->"NoneL000"[style = dashed]
+
+}

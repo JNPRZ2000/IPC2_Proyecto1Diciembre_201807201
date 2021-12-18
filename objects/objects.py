@@ -1,4 +1,5 @@
-from tkinter import Entry, Tk, Button
+import os
+from tkinter import Entry
 class Nodo:
     def __init__(self, value, id):
         self.value = value
@@ -9,11 +10,11 @@ class Nodo:
         return str(self.value)
 class ListaDoble:
     def __init__(self):
-        self.lenght = 0
+        self.length = 0
         self.cabeza = None
         self.cola = None
     def append(self, value):
-        nuevo = Nodo(value, self.lenght)
+        nuevo = Nodo(value, self.length)
         if self.cabeza == None:
             self.cabeza = nuevo
             self.cola = self.cabeza
@@ -22,12 +23,12 @@ class ListaDoble:
             nuevo.anterior = actual
             self.cola = nuevo
             actual.siguiente = self.cola
-        self.lenght += 1
+        self.length += 1
     def getById(self, id):
         if self.cabeza == None:
             return "No hay cabeza"
         else:
-            if id < 0 or id >= self.lenght:
+            if id < 0 or id >= self.length:
                 return "Fuera de rango"
             else:
                 actual = self.cabeza
@@ -48,6 +49,8 @@ class ListaDoble:
                 return actual.id
             else:
                 return None
+    def contains2(self, nombre):
+        pass
     def __str__(self):
         if self.cabeza == None:
             return "[]"
@@ -79,7 +82,7 @@ class Album:
         return self.listaCanciones
     def __str__(self):
         string = "\n\t\t\tAlbum: {} - Canciones:\n".format(self.nombre)
-        for i in range(self.listaCanciones.lenght):
+        for i in range(self.listaCanciones.length):
                 string += "\n\t\t\t\t{}".format(self.listaCanciones.getById(i))       
         return string
 class Artista:
@@ -88,14 +91,14 @@ class Artista:
         self.listaAlbumes = ListaDoble()
     def getAlbumes(self):
         lista = []
-        for i in range(self.listaAlbumes.lenght):
+        for i in range(self.listaAlbumes.length):
             album = self.listaAlbumes.getById(i)
             lista.append(album.nombre)
         return lista
 
     def __str__(self):
         string = "\n\t\tArtista: {} - Albumes:".format(self.nombre)
-        for i in range(self.listaAlbumes.lenght):
+        for i in range(self.listaAlbumes.length):
             string += "\n{}".format(self.listaAlbumes.getById(i))
         return string
 class Library:
@@ -130,24 +133,98 @@ class Library:
             self.listaArtistas.append(nuevoArtista)
     def toList(self):#Este método retorna una lista que es necesaria
         lista = ListaDoble()
-        for i in range(self.listaArtistas.lenght):
+        for i in range(self.listaArtistas.length):
             artista = self.listaArtistas.getById(i)
-            for j in range(artista.listaAlbumes.lenght):
+            for j in range(artista.listaAlbumes.length):
                 album = artista.listaAlbumes.getById(j)
-                for k in range(album.listaCanciones.lenght):
+                for k in range(album.listaCanciones.length):
                     cancion = album.listaCanciones.getById(k)
                     lista.append(cancion)
         return lista
+    def report(self):
+        string = """digraph G {
+layout = dot;
+labelloc = "t";
+edge [weigth = 1000];
+rankdir = LR;\n"""
+        string += "subgraph artistas {\nrankdir = LR;\n"
+        for i in range(self.listaArtistas.length):
+            artista = self.listaArtistas.getById(i)
+            string += '"{}"[fillcolor = beige style = "filled"];\n'.format(artista.nombre)
+            string += 'subgraph "album{}"{}\nrankdir = LR;\n'.format(artista.nombre,"{")
+            for j in range(artista.listaAlbumes.length):
+                album = artista.listaAlbumes.getById(j)
+                if j == 0:
+                    string += '"{}"->"{}"\n'.format(artista.nombre,album.nombre)
+                string += '"{}"[fillcolor = aquamarine style = "filled"];'.format(album.nombre)
+                string += 'subgraph "album{}"{}\nrankdir = LR;\n'.format(album.nombre,"{")
+                for k in range(album.listaCanciones.length):
+                    cancion = album.listaCanciones.getById(k)
+                    if k == 0:
+                        string += '"{}"->"{}"\n'.format(album.nombre, cancion.nombre)
+                    string += '"{}"[fillcolor = deepskyblue style = "filled"];\n'.format(cancion.nombre)
+                string += '}\n'
+
+            string += '}\n'
+        string += "}\n"
+        #Hacia delante
+        for i in range(self.listaArtistas.length):
+            artista = self.listaArtistas.getById(i)
+            if i+1 == self.listaArtistas.length:
+                string += '"{}"->"NoneR{}"[style = dashed]\n'.format(artista.nombre, i+1)
+            else:
+                siguiente = self.listaArtistas.getById(i+1)
+                string += '"{}"->"{}"\n'.format(artista.nombre, siguiente.nombre)
+            for j in range(artista.listaAlbumes.length):
+                album = artista.listaAlbumes.getById(j)
+                if j+1 == artista.listaAlbumes.length:
+                    string += '"{}"->"NoneR{}{}"[style = dashed]\n'.format(album.nombre,i,j)
+                else:
+                    siguiente = artista.listaAlbumes.getById(j+1)
+                    string += '"{}"->"{}"\n'.format(album.nombre, siguiente.nombre)
+                for k in range(album.listaCanciones.length):
+                    cancion = album.listaCanciones.getById(k)
+                    if k+1 == album.listaCanciones.length:
+                        string += '"{}"->"NoneR{}{}{}"[style = dashed]\n'.format(cancion.nombre,i,j,k)
+                    else:
+                        siguiente = album.listaCanciones.getById(k+1)
+                        string += '"{}"->"{}"\n'.format(cancion.nombre, siguiente.nombre)
+        #Hacia atras
+        for i in range(self.listaArtistas.length-1,-1,-1):
+            artista = self.listaArtistas.getById(i)
+            if i-1 == -1:
+                string += '"{}"->"NoneL{}"[style = dashed]\n'.format(artista.nombre,i)
+            else:
+                anterior = self.listaArtistas.getById(i-1)
+                string += '"{}"->"{}"\n'.format(artista.nombre, anterior.nombre)
+            for j in range(artista.listaAlbumes.length-1,-1,-1):
+                album = artista.listaAlbumes.getById(j)
+                if j-1 == -1:
+                    string += '"{}"->"NoneL{}{}"[style = dashed]\n'.format(album.nombre,j,i)
+                else:
+                    anterior = artista.listaAlbumes.getById(j-1)
+                    string += '"{}"->"{}"\n'.format(album.nombre, anterior.nombre)
+                for k in range(album.listaCanciones.length-1,-1,-1):
+                    cancion = album.listaCanciones.getById(k)
+                    if k-1 == -1:
+                        string += '"{}"->"NoneL{}{}{}"[style = dashed]\n'.format(cancion.nombre,k,j,i)
+                    else:
+                        anterior = album.listaCanciones.getById(k-1)
+                        string += '"{}"->"{}"\n'.format(cancion.nombre, anterior.nombre)
+        string += "\n}"
+        file = open("library.dot", "w")
+        file.write(string)
+        file.close()
+        os.system('dot -Tpng library.dot -o library.png')
     def getArtistas(self):
         lista = []
-        for i in range(self.listaArtistas.lenght):
+        for i in range(self.listaArtistas.length):
             artista = self.listaArtistas.getById(i)
             lista.append(artista.nombre)
-        return lista
-        
+        return lista    
     def __str__(self):
         string = "Biblioteca\n\tArtistas:\n"
-        for i in range(self.listaArtistas.lenght):
+        for i in range(self.listaArtistas.length):
             string += "\n\t{}".format(self.listaArtistas.getById(i))
         return string
 class EntryPlaceholder(Entry):
@@ -179,6 +256,7 @@ class ListaCircular:
         self.length = 0
         self.head = None
         self.cola = None
+        self.nombre = ""
     def append(self, value):
         nuevo = Nodo(value, self.length)
         if self.head == None:
@@ -200,7 +278,8 @@ class ListaCircular:
             while True:
                 if actual.id == id:
                     break
-            return actual
+                actual = actual.siguiente
+            return actual.value
     def contains(self, object):
         if self.head == None:
             return None
@@ -232,6 +311,8 @@ class ListaCircular:
         else:
             string += "]"
         return string
+
+
 
         
         
