@@ -49,8 +49,6 @@ class ListaDoble:
                 return actual.id
             else:
                 return None
-    def contains2(self, nombre):
-        pass
     def __str__(self):
         if self.cabeza == None:
             return "[]"
@@ -95,7 +93,6 @@ class Artista:
             album = self.listaAlbumes.getById(i)
             lista.append(album.nombre)
         return lista
-
     def __str__(self):
         string = "\n\t\tArtista: {} - Albumes:".format(self.nombre)
         for i in range(self.listaAlbumes.length):
@@ -147,70 +144,70 @@ layout = dot;
 labelloc = "t";
 edge [weigth = 1000];
 rankdir = LR;\n"""
-        string += "subgraph artistas {\nrankdir = LR;\n"
+        string += "\tsubgraph artistas {\n\trankdir = LR;\n"
         for i in range(self.listaArtistas.length):
             artista = self.listaArtistas.getById(i)
-            string += '"{}"[fillcolor = beige style = "filled"];\n'.format(artista.nombre)
-            string += 'subgraph "album{}"{}\nrankdir = LR;\n'.format(artista.nombre,"{")
+            string += '\t\t"{}"[fillcolor = beige style = "filled"];\n'.format(artista.nombre)
+            string += '\t\t\tsubgraph "album{}"{}\n\t\t\trankdir = TB;\t\t\trank=same;\n'.format(artista.nombre,"{")
             for j in range(artista.listaAlbumes.length):
                 album = artista.listaAlbumes.getById(j)
                 if j == 0:
-                    string += '"{}"->"{}"\n'.format(artista.nombre,album.nombre)
-                string += '"{}"[fillcolor = aquamarine style = "filled"];'.format(album.nombre)
-                string += 'subgraph "album{}"{}\nrankdir = LR;\n'.format(album.nombre,"{")
+                    string += '\t\t\t\t"{}"->"{}"\n'.format(artista.nombre,album.nombre)
+                string += '\t\t\t\t"{}"[fillcolor = aquamarine style = "filled"];\n'.format(album.nombre)
+                string += '\t\t\t\t\tsubgraph "album{}"{}\n\t\t\t\t\trankdir = LR;\n'.format(album.nombre,"{")
                 for k in range(album.listaCanciones.length):
                     cancion = album.listaCanciones.getById(k)
                     if k == 0:
-                        string += '"{}"->"{}"\n'.format(album.nombre, cancion.nombre)
-                    string += '"{}"[fillcolor = deepskyblue style = "filled"];\n'.format(cancion.nombre)
-                string += '}\n'
+                        string += '\t\t\t\t\t\t"{}"->"{}"\n'.format(album.nombre, cancion.nombre)
+                    string += '\t\t\t\t\t\t\t"{}"[fillcolor = deepskyblue style = "filled"];\n'.format(cancion.nombre)
+                string += '\t\t\t\t\t}\n'
 
-            string += '}\n'
-        string += "}\n"
+            string += '\t\t\t}\n'
+        string += "\t}\n"
         #Hacia delante
         for i in range(self.listaArtistas.length):
             artista = self.listaArtistas.getById(i)
             if i+1 == self.listaArtistas.length:
-                string += '"{}"->"NoneR{}"[style = dashed]\n'.format(artista.nombre, i+1)
+                string += '"{}"->"NoneR{}"[style = dashed];\n'.format(artista.nombre, i+1)
             else:
                 siguiente = self.listaArtistas.getById(i+1)
-                string += '"{}"->"{}"\n'.format(artista.nombre, siguiente.nombre)
+                string += '"{}"->"{}";\n'.format(artista.nombre, siguiente.nombre)
             for j in range(artista.listaAlbumes.length):
                 album = artista.listaAlbumes.getById(j)
                 if j+1 == artista.listaAlbumes.length:
-                    string += '"{}"->"NoneR{}{}"[style = dashed]\n'.format(album.nombre,i,j)
+                    string += '"{}"->"NoneR{}{}"[style = dashed];\n'.format(album.nombre,i,j)
                 else:
                     siguiente = artista.listaAlbumes.getById(j+1)
-                    string += '"{}"->"{}"\n'.format(album.nombre, siguiente.nombre)
+                    string += '"{}"->"{}";\n'.format(album.nombre, siguiente.nombre)
                 for k in range(album.listaCanciones.length):
                     cancion = album.listaCanciones.getById(k)
                     if k+1 == album.listaCanciones.length:
-                        string += '"{}"->"NoneR{}{}{}"[style = dashed]\n'.format(cancion.nombre,i,j,k)
+                        string += '"{}"->"NoneR{}{}{}"[style = dashed];\n'.format(cancion.nombre,i,j,k)
                     else:
                         siguiente = album.listaCanciones.getById(k+1)
-                        string += '"{}"->"{}"\n'.format(cancion.nombre, siguiente.nombre)
+                        string += '"{}"->"{}";\n'.format(cancion.nombre, siguiente.nombre)
         #Hacia atras
         for i in range(self.listaArtistas.length-1,-1,-1):
             artista = self.listaArtistas.getById(i)
             if i-1 == -1:
-                string += '"{}"->"NoneL{}"[style = dashed]\n'.format(artista.nombre,i)
+                string += '"{}"->"NoneL{}"[style = dashed];\n'.format(artista.nombre,i)
             else:
                 anterior = self.listaArtistas.getById(i-1)
-                string += '"{}"->"{}"\n'.format(artista.nombre, anterior.nombre)
+                string += '"{}"->"{}";\n'.format(artista.nombre, anterior.nombre)
             for j in range(artista.listaAlbumes.length-1,-1,-1):
                 album = artista.listaAlbumes.getById(j)
                 if j-1 == -1:
-                    string += '"{}"->"NoneL{}{}"[style = dashed]\n'.format(album.nombre,j,i)
+                    string += '"{}"->"NoneL{}{}"[style = dashed];\n'.format(album.nombre,j,i)
                 else:
                     anterior = artista.listaAlbumes.getById(j-1)
-                    string += '"{}"->"{}"\n'.format(album.nombre, anterior.nombre)
+                    string += '"{}"->"{};"\n'.format(album.nombre, anterior.nombre)
                 for k in range(album.listaCanciones.length-1,-1,-1):
                     cancion = album.listaCanciones.getById(k)
                     if k-1 == -1:
-                        string += '"{}"->"NoneL{}{}{}"[style = dashed]\n'.format(cancion.nombre,k,j,i)
+                        string += '"{}"->"NoneL{}{}{}"[style = dashed];\n'.format(cancion.nombre,k,j,i)
                     else:
                         anterior = album.listaCanciones.getById(k-1)
-                        string += '"{}"->"{}"\n'.format(cancion.nombre, anterior.nombre)
+                        string += '"{}"->"{}";\n'.format(cancion.nombre, anterior.nombre)
         string += "\n}"
         file = open("library.dot", "w")
         file.write(string)
@@ -242,12 +239,10 @@ class EntryPlaceholder(Entry):
     def put_placeholder(self):
         self.insert(0, self.placeholder)
         self['fg'] = self.placeholder_color
-
     def foc_in(self, *args):
         if self['fg'] == self.placeholder_color:
             self.delete('0', 'end')
             self['fg'] = self.default_fg_color
-
     def foc_out(self, *args):
         if not self.get():
             self.put_placeholder()
@@ -294,7 +289,6 @@ class ListaCircular:
                 return actual.siguiente
             else:
                 return None
-
     def __str__(self):
         string = "["
         if self.head != None:
@@ -311,8 +305,3 @@ class ListaCircular:
         else:
             string += "]"
         return string
-
-
-
-        
-        

@@ -1,3 +1,4 @@
+import os
 from tkinter.constants import END, CENTER, VERTICAL
 from metodos.readxml import XMLReader
 from objects.objects import EntryPlaceholder, ListaCircular, ListaDoble
@@ -5,7 +6,6 @@ from tkinter import Image, Tk, Button, Frame, Label, ttk, messagebox
 import tkinter.font as TFont
 from PIL import Image
 from PIL import ImageTk
-
 from thread.thread import TPlay
 
 class Window(Tk):
@@ -15,7 +15,7 @@ class Window(Tk):
         y_ = self.winfo_screenheight()//2-700//2
         self.resizable(0,0)
         self.geometry("1360x700+{}+{}".format(x_,y_))
-        self.title("IPC2 Media Player")
+        self.title("NOZC Media Player")
         self.library = None
         self.songslist = ListaDoble()
         self.playList = ListaCircular()
@@ -207,10 +207,62 @@ class Window(Tk):
     def reportes(self):
         if self.library != None:
             self.library.report()
+            if self.listaPlayList.length > 0:
+                string = """
+digraph G{
+    edge [weigth = 1000];
+    subgraph listas{
+        rankdir = LR;\n"""
+                string2 = ""
+                for i in range(self.listaPlayList.length):
+                    lista = self.listaPlayList.getById(i)
+                    string += '\t\t"{}"[color = beige style = "filled"];\n'.format(lista.nombre)
+                    string2 +="\tsubgraph lista{}{}\n".format(i,"{")
+                    string2 += "\t\trank = same;\n"
+                    for j in range(lista.length):
+                        cancion = lista.getById(j)
+                        string2 += '\t\t"{}"[color = coral style = "filled"]\n'.format(cancion.nombre)
+                    string2 += "\t}\n"
+                string += '\t}\n'
+                string += string2
+                for i in range(self.listaPlayList.length):
+                    lista = self.listaPlayList.getById(i)
+                    if i+1 == self.listaPlayList.length:
+                        string += '"{}"->"NoneL->"\n'.format(lista.nombre)
+                    else:
+                        siguiente = self.listaPlayList.getById(i+1)
+                        string += '"{}"->"{}"\n'.format(lista.nombre, siguiente.nombre)
+                    for j in range(lista.length):
+                        cancion = lista.getById(j)
+                        if j == 0:
+                            string += '"{}"->"{}"'.format(lista.nombre, cancion.nombre)
+                        if j+1 == lista.length:
+                            string += '"{}"->"{}"\n'.format(cancion.nombre, lista.getById(0).nombre)
+                        else:
+                            string += '"{}"->"{}"\n'.format(cancion.nombre, lista.getById(j+1).nombre)
+                for i in range(self.listaPlayList.length-1,-1,-1):
+                    lista = self.listaPlayList.getById(i)
+                    if i-1 == -1:
+                        string += '"{}"->"<-NoneL"\n'.format(lista.nombre)
+                    else:
+                        siguiente = self.listaPlayList.getById(i-1)
+                        string += '"{}"->"{}"\n'.format(lista.nombre, siguiente.nombre)
+                    for j in range(lista.length-1,-1,-1):
+                        cancion = lista.getById(j)
+                        if j-1 == -1:
+                            string += '"{}"->"{}"\n'.format(cancion.nombre, lista.getById(lista.length-1).nombre)
+                        else:
+                            string += '"{}"->"{}"\n'.format(cancion.nombre, lista.getById(j-1).nombre)
+                string += '}'
+                file = open("grafo_circular.dot", "w")
+                file.write(string)
+                file.close()
+                os.system('dot -Tpng grafo_circular.dot -o grafo_circular.png')
+            else:
+                messagebox.showerror(message = "No se han creado listas de reproducción", title = "Error")
         else:
             messagebox.showerror(message = "No se ha cargado ninguna biblioteca", title = "Error")
     def saveList(self):
-        
         self.playList.nombre = self.entryPlaylist.get()
         aux = self.playList
         self.playList = None
@@ -246,8 +298,3 @@ class Window(Tk):
             file = open("Listas_de_reproducción.xml", "w")
             file.write(xml)
             file.close()
-        
-        
-
-
-

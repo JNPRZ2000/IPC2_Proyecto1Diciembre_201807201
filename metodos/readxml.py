@@ -39,6 +39,3 @@ class XMLReader:
                         artista += "single"
                     self.biblioteca.addSong(Cancion(nombre, album, artista, ruta, imagen))
             return self.biblioteca 
-    def writeXML(self, lista):
-        list = lista
-        string = '<?xml  version = "1.0" encoding = "UTF-8"?>'

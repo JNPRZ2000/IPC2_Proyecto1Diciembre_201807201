@@ -1,7 +1,6 @@
 import threading
 import ctypes
 from pygame import mixer
-import time
 class TPlay(threading.Thread):
     def __init__(self, ruta):
         threading.Thread.__init__(self)
@@ -9,26 +8,15 @@ class TPlay(threading.Thread):
         self.estado = ""
     def run(self):
         mixer.init() 
-  
         mixer.music.load(self.ruta) 
-        
         mixer.music.set_volume(0.7) 
-        
         mixer.music.play() 
-        
         while True: 
-            
             if self.estado == 'p': 
-        
-                
                 mixer.music.pause()      
             elif self.estado == 'r': 
-        
-                
                 mixer.music.unpause() 
             elif self.estado == 'e': 
-        
-                
                 mixer.music.stop() 
                 break
     def get_id(self):
